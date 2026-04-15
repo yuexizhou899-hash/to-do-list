@@ -3,148 +3,443 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List</title>
+    <title>Daily Task Manager</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: "SF Pro Display", "Arial", sans-serif;
         }
 
         body {
             background-color: #f7f8fa;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
+            min-height: 100vh;
+            padding: 30px 20px;
         }
 
         .container {
-            background: white;
-            width: 100%;
-            max-width: 600px;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        h1 {
+        .header {
             text-align: center;
-            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .date-time {
+            font-size: 36px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #6e6e73;
+        }
+
+        .add-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
             margin-bottom: 25px;
-            font-size: 26px;
+        }
+
+        .add-card h3 {
+            font-size: 20px;
+            color: #1d1d1f;
+            margin-bottom: 16px;
+            font-weight: 500;
         }
 
         .input-group {
             display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
+            flex-direction: column;
+            gap: 12px;
         }
 
         #taskInput {
-            flex: 1;
-            padding: 12px 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 16px;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            font-size: 18px;
             outline: none;
+            background: #fafafa;
         }
 
-        #taskInput:focus {
-            border-color: #4a90e2;
+        #taskInput::placeholder {
+            color: #c7c7cc;
         }
 
         #addBtn {
-            padding: 12px 20px;
-            background-color: #4a90e2;
-            color: white;
+            padding: 16px;
+            background: #1d1d1f;
+            color: #ffffff;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 500;
             cursor: pointer;
-            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         #addBtn:hover {
-            background-color: #357abd;
+            background: #3a3a3c;
         }
 
-        .task {
+        .task-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .task-column {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .column-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 14px 16px;
-            background: #f9f9f9;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .column-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: #8e8e93;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .clear-btn:hover {
+            color: #ff3b30;
+        }
+
+        .task-list {
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .empty-tip {
+            text-align: center;
+            color: #c7c7cc;
+            font-size: 18px;
+            padding: 40px 0;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #fafafa;
             border-radius: 10px;
-            margin-bottom: 10px;
+        }
+
+        .done-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f2f2f7;
+            border-radius: 10px;
+            text-decoration: line-through;
+            color: #8e8e93;
+        }
+
+        .task-checkbox {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #34c759;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .task-checkbox.checked {
+            background: #34c759;
+            color: #ffffff;
         }
 
         .task-text {
+            flex: 1;
             font-size: 16px;
-            color: #333;
         }
 
         .delete-btn {
-            background-color: #ff4d4f;
-            color: white;
+            background: none;
             border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
+            color: #ff3b30;
+            font-size: 18px;
             cursor: pointer;
-            font-size: 14px;
+            flex-shrink: 0;
         }
 
-        .delete-btn:hover {
-            background-color: #d9363a;
+        .bottom-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .stat-card, .review-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 22px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 16px;
+        }
+
+        .stat-content {
+            text-align: center;
+            color: #c7c7cc;
+            font-size: 18px;
+            padding: 30px 0;
+        }
+
+        #reviewInput {
+            width: 100%;
+            min-height: 180px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            resize: none;
+            background: transparent;
+        }
+
+        #reviewInput::placeholder {
+            color: #c7c7cc;
+        }
+
+        @media (max-width: 600px) {
+            .task-columns, .bottom-section {
+                grid-template-columns: 1fr;
+            }
+            .date-time {
+                font-size: 28px;
+            }
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <h1>My To-Do List</h1>
-
-        <div class="input-group">
-            <input type="text" id="taskInput" placeholder="Enter your task...">
-            <button id="addBtn">Add Task</button>
+        <div class="header">
+            <div class="date-time" id="dateTime"></div>
+            <div class="subtitle">Manage your daily tasks</div>
         </div>
 
-        <div id="taskList"></div>
+        <div class="add-card">
+            <h3>Add New Task</h3>
+            <div class="input-group">
+                <input type="text" id="taskInput" placeholder="Enter a new task...">
+                <button id="addBtn">
+                    <span>+</span>
+                    <span>Add</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="task-columns">
+            <div class="task-column">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span>▤</span>
+                        <span>To-Do</span>
+                    </div>
+                </div>
+                <div class="task-list" id="todoList">
+                    <div class="empty-tip">No tasks yet</div>
+                </div>
+            </div>
+
+            <div class="task-column">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span>✅</span>
+                        <span>Completed</span>
+                    </div>
+                    <button class="clear-btn" id="clearDone">
+                        <span>🗑</span>
+                        <span>Clear</span>
+                    </button>
+                </div>
+                <div class="task-list" id="doneList">
+                    <div class="empty-tip">No completed tasks</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-section">
+            <div class="stat-card">
+                <div class="card-title">
+                    <span>🗒</span>
+                    <span>Task Summary</span>
+                </div>
+                <div class="stat-content" id="statContent">No task records</div>
+            </div>
+
+            <div class="review-card">
+                <div class="card-title">
+                    <span>♻️</span>
+                    <span>Daily Review</span>
+                </div>
+                <textarea id="reviewInput" placeholder="Write your daily reflection..."></textarea>
+            </div>
+        </div>
     </div>
 
     <script>
-        const input = document.getElementById('taskInput');
-        const addBtn = document.getElementById('addBtn');
-        const taskList = document.getElementById('taskList');
+        
+        function updateDateTime() {
+            const now = new Date();
+
+            const dateOptions = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            };
+
+            const timeOptions = {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+
+            const dateStr = now.toLocaleDateString('en-US', dateOptions);
+            const timeStr = now.toLocaleTimeString('en-US', timeOptions);
+
+            document.getElementById('dateTime').innerText = `${dateStr}, ${timeStr}`;
+        }
+
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
 
         
+        const taskInput = document.getElementById('taskInput');
+        const addBtn = document.getElementById('addBtn');
+        const todoList = document.getElementById('todoList');
+        const doneList = document.getElementById('doneList');
+        const clearDoneBtn = document.getElementById('clearDone');
+        const statContent = document.getElementById('statContent');
+
+        function updateEmptyAndStat() {
+            const todoEmpty = todoList.querySelector('.empty-tip');
+            if (todoList.children.length === 0 || (todoList.children.length === 1 && todoEmpty)) {
+                if (!todoEmpty) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-tip';
+                    empty.textContent = 'No tasks yet';
+                    todoList.appendChild(empty);
+                }
+            } else if (todoEmpty) todoEmpty.remove();
+
+            const doneEmpty = doneList.querySelector('.empty-tip');
+            if (doneList.children.length === 0 || (doneList.children.length === 1 && doneEmpty)) {
+                if (!doneEmpty) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-tip';
+                    empty.textContent = 'No completed tasks';
+                    doneList.appendChild(empty);
+                }
+            } else if (doneEmpty) doneEmpty.remove();
+
+            const todoCount = todoList.querySelectorAll('.todo-item').length;
+            const doneCount = doneList.querySelectorAll('.done-item').length;
+            if (todoCount === 0 && doneCount === 0) {
+                statContent.textContent = 'No task records';
+            } else {
+                statContent.textContent = `To-Do: ${todoCount} · Completed: ${doneCount}`;
+            }
+        }
+
         addBtn.addEventListener('click', () => {
-            const taskText = input.value.trim();
-            if (taskText === '') return;
+            const text = taskInput.value.trim();
+            if (!text) return;
 
-            const taskDiv = document.createElement('div');
-            taskDiv.className = 'task';
+            const item = document.createElement('div');
+            item.className = 'todo-item';
 
-            const text = document.createElement('div');
-            text.className = 'task-text';
-            text.textContent = taskText;
+            const checkbox = document.createElement('div');
+            checkbox.className = 'task-checkbox';
+            checkbox.addEventListener('click', () => {
+                item.classList.remove('todo-item');
+                item.classList.add('done-item');
+                checkbox.classList.add('checked');
+                checkbox.textContent = '✓';
+                doneList.appendChild(item);
+                updateEmptyAndStat();
+            });
 
-            const delBtn = document.createElement('button');
-            delBtn.className = 'delete-btn';
-            delBtn.textContent = 'Delete';
-            delBtn.onclick = () => taskDiv.remove();
+            const taskText = document.createElement('div');
+            taskText.className = 'task-text';
+            taskText.textContent = text;
 
-            taskDiv.appendChild(text);
-            taskDiv.appendChild(delBtn);
-            taskList.appendChild(taskDiv);
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.textContent = '✕';
+            deleteBtn.addEventListener('click', () => {
+                item.remove();
+                updateEmptyAndStat();
+            });
 
-            input.value = '';
+            item.appendChild(checkbox);
+            item.appendChild(taskText);
+            item.appendChild(deleteBtn);
+            todoList.appendChild(item);
+
+            taskInput.value = '';
+            updateEmptyAndStat();
         });
 
-      
-        input.addEventListener('keypress', (e) => {
+        taskInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') addBtn.click();
         });
-    </script>
 
+        clearDoneBtn.addEventListener('click', () => {
+            const doneItems = doneList.querySelectorAll('.done-item');
+            doneItems.forEach(item => item.remove());
+            updateEmptyAndStat();
+        });
+
+        updateEmptyAndStat();
+    </script>
 </body>
 </html>
