@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>To-Do List Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
     <style>
         * {
             margin: 0;
@@ -10,125 +11,140 @@
             box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
+
         body {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 0 20px;
-            background: #f5f5f5;
+            background-color: #f7f8fa;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
         }
+
         .container {
             background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
+
         h1 {
             text-align: center;
-            margin-bottom: 20px;
             color: #333;
+            margin-bottom: 25px;
+            font-size: 26px;
         }
-        .input-area {
+
+        .input-group {
             display: flex;
             gap: 10px;
             margin-bottom: 25px;
         }
+
         #taskInput {
             flex: 1;
-            padding: 12px;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            outline: none;
         }
-        button {
+
+        #taskInput:focus {
+            border-color: #4a90e2;
+        }
+
+        #addBtn {
             padding: 12px 20px;
-            background: #4CAF50;
+            background-color: #4a90e2;
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 16px;
         }
-        button:hover {
-            background: #45a049;
+
+        #addBtn:hover {
+            background-color: #357abd;
         }
-        .task-item {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
+
+        .task {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 14px 16px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            margin-bottom: 10px;
         }
-        .task-item.completed {
-            text-decoration: line-through;
-            color: #888;
+
+        .task-text {
+            font-size: 16px;
+            color: #333;
         }
+
         .delete-btn {
-            background: #f44336;
-            padding: 6px 10px;
+            background-color: #ff4d4f;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
             font-size: 14px;
+        }
+
+        .delete-btn:hover {
+            background-color: #d9363a;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>To-Do List Task Manager</h1>
 
-        <div class="input-area">
+    <div class="container">
+        <h1>My To-Do List</h1>
+
+        <div class="input-group">
             <input type="text" id="taskInput" placeholder="Enter your task...">
-            <button onclick="addTask()">Add Task</button>
+            <button id="addBtn">Add Task</button>
         </div>
 
         <div id="taskList"></div>
     </div>
 
     <script>
-        const API_URL = "https://gilled-lasso-sincere.ngrok-free.dev/api/tasks/";
-
-        window.onload = fetchTasks;
-
-        // 获取所有任务
-        async function fetchTasks() {
-            const res = await fetch(API_URL);
-            const tasks = await res.json();
-            renderTasks(tasks);
-        }
-
-       
-        function renderTasks(tasks) {
-            const list = document.getElementById("taskList");
-            list.innerHTML = "";
-
-            tasks.forEach(task => {
-                const div = document.createElement("div");
-                div.className = "task-item " + (task.completed ? "completed" : "");
-                div.innerHTML = `
-                    <span>${task.title}</span>
-                    <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
-                `;
-                list.appendChild(div);
-            });
-        }
+        const input = document.getElementById('taskInput');
+        const addBtn = document.getElementById('addBtn');
+        const taskList = document.getElementById('taskList');
 
         
-        async function addTask() {
-            const input = document.getElementById("taskInput");
-            const title = input.value.trim();
-            if (!title) return;
+        addBtn.addEventListener('click', () => {
+            const taskText = input.value.trim();
+            if (taskText === '') return;
 
-            await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title: title, completed: false })
-            });
+            const taskDiv = document.createElement('div');
+            taskDiv.className = 'task';
 
-            input.value = "";
-            fetchTasks();
-        }
+            const text = document.createElement('div');
+            text.className = 'task-text';
+            text.textContent = taskText;
 
-       
-        async function deleteTask(id) {
-            await fetch(`${API_URL}${id}/`, { method: "DELETE" });
-            fetchTasks();
-        }
+            const delBtn = document.createElement('button');
+            delBtn.className = 'delete-btn';
+            delBtn.textContent = 'Delete';
+            delBtn.onclick = () => taskDiv.remove();
+
+            taskDiv.appendChild(text);
+            taskDiv.appendChild(delBtn);
+            taskList.appendChild(taskDiv);
+
+            input.value = '';
+        });
+
+      
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addBtn.click();
+        });
     </script>
+
 </body>
 </html>
