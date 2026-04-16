@@ -74,6 +74,31 @@
             color: #c7c7cc;
         }
 
+        .extra-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        #deadline {
+            flex: 1;
+            padding: 16px;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            background: #fafafa;
+        }
+
+        #notice {
+            flex: 2;
+            padding: 16px;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            background: #fafafa;
+        }
+
         #addBtn {
             padding: 16px;
             background: #1d1d1f;
@@ -152,22 +177,17 @@
             padding: 40px 0;
         }
 
-        .todo-item {
+        .todo-item, .done-item {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
-            padding: 12px;
+            padding: 14px;
             background: #fafafa;
             border-radius: 10px;
         }
 
         .done-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
             background: #f2f2f7;
-            border-radius: 10px;
             text-decoration: line-through;
             color: #8e8e93;
         }
@@ -182,6 +202,7 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            margin-top: 4px;
         }
 
         .task-checkbox.checked {
@@ -189,9 +210,32 @@
             color: #ffffff;
         }
 
-        .task-text {
+        .task-body {
             flex: 1;
+        }
+
+        .task-text {
             font-size: 16px;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .task-notice {
+            font-size: 14px;
+            color: #6e6e73;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .task-deadline {
+            font-size: 13px;
+            color: #ff3b30;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .delete-btn {
@@ -254,6 +298,9 @@
             .date-time {
                 font-size: 28px;
             }
+            .extra-row {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -268,6 +315,12 @@
             <h3>Add New Task</h3>
             <div class="input-group">
                 <input type="text" id="taskInput" placeholder="Enter a new task...">
+                
+                <div class="extra-row">
+                    <input type="datetime-local" id="deadline">
+                    <input type="text" id="notice" placeholder="📝 Notice details">
+                </div>
+
                 <button id="addBtn">
                     <span>+</span>
                     <span>Add</span>
@@ -325,40 +378,38 @@
     </div>
 
     <script>
-        
         function updateDateTime() {
             const now = new Date();
-
-            const dateOptions = {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                weekday: 'long'
-            };
-
-            const timeOptions = {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: true
-            };
-
+            const dateOptions = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
             const dateStr = now.toLocaleDateString('en-US', dateOptions);
             const timeStr = now.toLocaleTimeString('en-US', timeOptions);
-
             document.getElementById('dateTime').innerText = `${dateStr}, ${timeStr}`;
         }
-
         updateDateTime();
         setInterval(updateDateTime, 1000);
 
-        
         const taskInput = document.getElementById('taskInput');
+        const deadlineInput = document.getElementById('deadline');
+        const noticeInput = document.getElementById('notice');
         const addBtn = document.getElementById('addBtn');
         const todoList = document.getElementById('todoList');
         const doneList = document.getElementById('doneList');
         const clearDoneBtn = document.getElementById('clearDone');
         const statContent = document.getElementById('statContent');
+
+        function getDeadlineText(deadline) {
+            if (!deadline) return "⏳ No deadline";
+            const now = new Date();
+            const end = new Date(deadline);
+            const diff = end - now;
+            if (diff <= 0) return "⏳ Expired";
+
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            return `⏳ ${h}h ${m}m ${s}s left`;
+        }
 
         function updateEmptyAndStat() {
             const todoEmpty = todoList.querySelector('.empty-tip');
@@ -390,10 +441,7 @@
             }
         }
 
-        addBtn.addEventListener('click', () => {
-            const text = taskInput.value.trim();
-            if (!text) return;
-
+        function createTaskItem(text, notice, deadline) {
             const item = document.createElement('div');
             item.className = 'todo-item';
 
@@ -408,24 +456,52 @@
                 updateEmptyAndStat();
             });
 
+            const body = document.createElement('div');
+            body.className = 'task-body';
+
             const taskText = document.createElement('div');
             taskText.className = 'task-text';
             taskText.textContent = text;
 
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-btn';
-            deleteBtn.textContent = '✕';
-            deleteBtn.addEventListener('click', () => {
-                item.remove();
-                updateEmptyAndStat();
-            });
+            const taskNotice = document.createElement('div');
+            taskNotice.className = 'task-notice';
+            taskNotice.innerHTML = `📝 ${notice || 'No notice'}`;
+
+            const deadlineLine = document.createElement('div');
+            deadlineLine.className = 'task-deadline';
+            deadlineLine.textContent = getDeadlineText(deadline);
+
+            if (deadline) {
+                setInterval(() => {
+                    deadlineLine.textContent = getDeadlineText(deadline);
+                }, 1000);
+            }
+
+            body.appendChild(taskText);
+            body.appendChild(taskNotice);
+            body.appendChild(deadlineLine);
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'delete-btn';
+            delBtn.textContent = '✕';
+            delBtn.onclick = () => { item.remove(); updateEmptyAndStat(); };
 
             item.appendChild(checkbox);
-            item.appendChild(taskText);
-            item.appendChild(deleteBtn);
-            todoList.appendChild(item);
+            item.appendChild(body);
+            item.appendChild(delBtn);
+            return item;
+        }
 
+        addBtn.addEventListener('click', () => {
+            const text = taskInput.value.trim();
+            if (!text) return;
+            const notice = noticeInput.value.trim();
+            const deadline = deadlineInput.value;
+            const item = createTaskItem(text, notice, deadline);
+            todoList.appendChild(item);
             taskInput.value = '';
+            noticeInput.value = '';
+            deadlineInput.value = '';
             updateEmptyAndStat();
         });
 
@@ -434,8 +510,7 @@
         });
 
         clearDoneBtn.addEventListener('click', () => {
-            const doneItems = doneList.querySelectorAll('.done-item');
-            doneItems.forEach(item => item.remove());
+            doneList.querySelectorAll('.done-item').forEach(i => i.remove());
             updateEmptyAndStat();
         });
 
