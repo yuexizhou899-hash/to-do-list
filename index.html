@@ -204,7 +204,7 @@
             color: white;
         }
 
-        /* 核心修改：AM 在上，PM 在下，垂直排列 */
+      
         .ampm-select {
             display: flex;
             flex-direction: column;
@@ -487,7 +487,7 @@
             color: #c7c7cc;
         }
 
-        /* 编辑弹窗样式 */
+        
         .edit-modal {
             position: fixed;
             top: 0;
@@ -684,7 +684,7 @@
         </div>
     </div>
 
-    <!-- 编辑弹窗 -->
+   
     <div class="edit-modal" id="editModal">
         <div class="edit-modal-content">
             <div class="edit-modal-header">
@@ -704,7 +704,7 @@
     </div>
 
     <script>
-       
+     
         function updateDateTime() {
             const now = new Date();
             const options = { 
@@ -720,8 +720,9 @@
             document.getElementById('dateTime').innerText = now.toLocaleDateString('en-US', options);
         }
 
-   
-      
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
         const deadlineInput = document.getElementById('deadlineInput');
         const datePickerPopup = document.getElementById('datePickerPopup');
         const datePickerMonth = document.getElementById('datePickerMonth');
@@ -741,7 +742,6 @@
         let selectedMinute = null;
         let selectedAmPm = null;
 
-        // 初始化日期选择器
         function initDatePicker() {
             renderDatePicker();
             renderTimeSelect();
@@ -796,7 +796,7 @@
             });
         }
 
-       
+        
         function renderDatePicker() {
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
@@ -807,17 +807,16 @@
 
             datePickerMonth.textContent = `${new Date(year, month).toLocaleDateString('en-US', { month: 'long' })} ${year}`;
 
-           
+            
             const weekdays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
             let gridHtml = weekdays.map(day => `<div class="date-picker-weekday">${day}</div>`).join('');
 
-          
             const prevMonthLastDay = new Date(year, month, 0).getDate();
             for (let i = startDay - 1; i >= 0; i--) {
                 gridHtml += `<div class="date-picker-day other-month">${prevMonthLastDay - i}</div>`;
             }
 
-           
+            
             for (let i = 1; i <= daysInMonth; i++) {
                 const isSelected = selectedDate && 
                     selectedDate.getFullYear() === year && 
@@ -826,7 +825,6 @@
                 gridHtml += `<div class="date-picker-day ${isSelected ? 'selected' : ''}" data-day="${i}">${i}</div>`;
             }
 
-         
             const nextMonthDays = 42 - (startDay + daysInMonth);
             for (let i = 1; i <= nextMonthDays; i++) {
                 gridHtml += `<div class="date-picker-day other-month">${i}</div>`;
@@ -834,7 +832,7 @@
 
             datePickerGrid.innerHTML = gridHtml;
 
-         
+            
             document.querySelectorAll('.date-picker-day:not(.other-month)').forEach(day => {
                 day.addEventListener('click', () => {
                     const dayNum = parseInt(day.dataset.day);
@@ -854,6 +852,7 @@
             }
             hourSelect.innerHTML = hourHtml;
 
+            
             let minuteHtml = '';
             for (let i = 0; i < 60; i += 5) {
                 const isSelected = selectedMinute === i;
@@ -861,7 +860,6 @@
             }
             minuteSelect.innerHTML = minuteHtml;
 
-           
             ampmOptions.forEach(option => {
                 option.classList.remove('selected');
                 if (option.dataset.value === selectedAmPm) {
@@ -884,6 +882,7 @@
                 });
             });
 
+        
             ampmOptions.forEach(option => {
                 option.addEventListener('click', () => {
                     selectedAmPm = option.dataset.value;
@@ -937,7 +936,6 @@
             return `⏳ ${h}h ${m}m ${s}s left`;
         }
 
-      
         function updateEmptyAndStat() {
             const todoList = document.getElementById('todoList');
             const doneList = document.getElementById('doneList');
@@ -972,7 +970,7 @@
             }
         }
 
-       
+        
         function createTaskItem(text, notice, deadlineStr) {
             const item = document.createElement('div');
             item.className = 'todo-item';
@@ -1043,7 +1041,6 @@
             return item;
         }
 
-        
         const editModal = document.getElementById('editModal');
         const editModalClose = document.getElementById('editModalClose');
         const editModalCancel = document.getElementById('editModalCancel');
@@ -1082,11 +1079,12 @@
                 return;
             }
 
-           
+            
             currentEditingItem.dataset.task = newTask;
             currentEditingItem.dataset.notice = newNotice;
             currentEditingItem.dataset.deadline = newDeadline;
 
+            
             const body = currentEditingItem.querySelector('.task-body');
             body.querySelector('.task-text').textContent = newTask;
             body.querySelector('.task-notice').innerHTML = `📝 ${newNotice || 'No notice'}`;
@@ -1107,6 +1105,8 @@
                 closeEditModal();
             }
         });
+
+        
         const taskInput = document.getElementById('taskInput');
         const noticeInput = document.getElementById('noticeInput');
         const addBtn = document.getElementById('addBtn');
@@ -1139,7 +1139,7 @@
             updateEmptyAndStat();
         });
 
-        // 初始化
+       
         initDatePicker();
         updateEmptyAndStat();
     </script>
