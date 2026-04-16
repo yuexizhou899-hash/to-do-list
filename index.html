@@ -3,412 +3,1154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Manager</title>
+    <title>Daily Task Manager</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: "SF Pro Display", "Arial", sans-serif;
         }
+
         body {
-            background: #f7f7f7;
+            background-color: #f7f8fa;
+            min-height: 100vh;
             padding: 30px 20px;
-            max-width: 900px;
+        }
+
+        .container {
+            max-width: 800px;
             margin: 0 auto;
         }
+
         .header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 30px;
         }
-        .time {
-            font-size: 24px;
+
+        .date-time {
+            font-size: 36px;
+            font-weight: 600;
+            color: #1d1d1f;
             margin-bottom: 8px;
         }
-        .card {
-            background: white;
+
+        .subtitle {
+            font-size: 20px;
+            color: #6e6e73;
+        }
+
+        .add-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            margin-bottom: 25px;
+        }
+
+        .add-card h3 {
+            font-size: 20px;
+            color: #1d1d1f;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        #taskInput {
+            padding: 16px;
+            border: 1px solid #e5e5ea;
             border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            font-size: 18px;
+            outline: none;
+            background: #fafafa;
         }
-        .card h3 {
-            margin-bottom: 12px;
+
+        #taskInput::placeholder {
+            color: #c7c7cc;
         }
-        input, textarea {
-            padding: 10px 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            width: 100%;
-            font-size: 14px;
-        }
-        .input-row {
+
+        .extra-row {
             display: flex;
             gap: 10px;
-            margin-bottom: 12px;
         }
-        .input-row > div {
+
+        /* 自定义日期选择器容器 */
+        .date-picker-container {
             flex: 1;
+            position: relative;
         }
-        button {
-            padding: 10px 16px;
-            background: #333;
-            color: white;
-            border: none;
-            border-radius: 8px;
+
+        #deadlineInput {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            background: #fafafa;
             cursor: pointer;
         }
 
-        
-        .datetime-group {
-            position: relative;
+        #deadlineInput::placeholder {
+            color: #c7c7cc;
         }
-        #deadlineDisplay {
-            cursor: pointer;
-        }
-        .datetime-panel {
+
+        .date-picker-popup {
             position: absolute;
-            top: 110%;
+            top: calc(100% + 8px);
             left: 0;
-            width: 100%;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            padding: 12px;
-            z-index: 10;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 16px;
+            z-index: 100;
             display: none;
+            min-width: 300px;
         }
-        .date-picker {
+
+        .date-picker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .date-picker-month {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .date-picker-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .date-picker-nav button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .date-picker-nav button:hover {
+            background: #f0f0f0;
+        }
+
+        .date-picker-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 4px;
-            margin-bottom: 10px;
-            font-size: 12px;
+            margin-bottom: 12px;
         }
-        .date-picker div {
+
+        .date-picker-weekday {
             text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6e6e73;
             padding: 4px;
-            border-radius: 4px;
+        }
+
+        .date-picker-day {
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .date-picker-day:hover {
+            background: #f0f0f0;
+        }
+
+        .date-picker-day.selected {
+            background: #1d1d1f;
+            color: white;
+        }
+
+        .date-picker-day.other-month {
+            color: #c7c7cc;
+        }
+
+        .date-picker-time {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .time-select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            text-align: center;
             cursor: pointer;
         }
-        .date-picker div:hover {
-            background: #eee;
+
+        .time-select:hover {
+            background: #f0f0f0;
         }
-        .date-picker .today {
-            background: #e0f0ff;
+
+        .time-select.selected {
+            background: #1d1d1f;
+            color: white;
         }
-        .time-picker {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 8px;
-        }
-        .time-picker select {
-            padding: 4px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-        .ampm-picker {
+
+        /* 核心修改：AM/PM 垂直排列，AM在上，PM在下 */
+        .ampm-select {
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
-        .ampm-picker button {
-            padding: 4px 8px;
-            font-size: 12px;
-            background: #eee;
-            color: black;
+
+        .ampm-option {
+            padding: 8px;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
         }
-        .ampm-picker button.active {
-            background: #333;
+
+        .ampm-option:hover {
+            background: #f0f0f0;
+        }
+
+        .ampm-option.selected {
+            background: #1d1d1f;
             color: white;
         }
 
-        .task-columns {
+        .date-picker-footer {
             display: flex;
-            gap: 20px;
-        }
-        .task-column {
-            flex: 1;
-        }
-        .task-item {
-            background: #fff;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #eee;
-        }
-        .task-text {
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-        .task-notice {
-            color: #666;
-            font-size: 13px;
-            margin-bottom: 4px;
-        }
-        .task-deadline {
-            color: #c73333;
-            font-size: 12px;
-            margin-bottom: 6px;
-        }
-        .actions {
-            display: flex;
+            justify-content: space-between;
             gap: 8px;
         }
-        .actions button {
-            font-size: 12px;
-            padding: 4px 8px;
+
+        .date-picker-footer button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
         }
-        .done {
+
+        .btn-clear {
             background: #f0f0f0;
-            text-decoration: line-through;
-            color: #888;
+            color: #1d1d1f;
         }
-        .modal {
+
+        .btn-today {
+            background: #f0f0f0;
+            color: #1d1d1f;
+        }
+
+        .btn-confirm {
+            background: #1d1d1f;
+            color: white;
+        }
+
+        #noticeInput {
+            flex: 2;
+            padding: 16px;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            background: #fafafa;
+        }
+
+        #noticeInput::placeholder {
+            color: #c7c7cc;
+        }
+
+        #addBtn {
+            padding: 16px;
+            background: #1d1d1f;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        #addBtn:hover {
+            background: #3a3a3c;
+        }
+
+        .task-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .task-column {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .column-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .column-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: #8e8e93;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .clear-btn:hover {
+            color: #ff3b30;
+        }
+
+        .task-list {
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .empty-tip {
+            text-align: center;
+            color: #c7c7cc;
+            font-size: 18px;
+            padding: 40px 0;
+        }
+
+        .todo-item, .done-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px;
+            background: #fafafa;
+            border-radius: 10px;
+        }
+
+        .done-item {
+            background: #f2f2f7;
+            text-decoration: line-through;
+            color: #8e8e93;
+        }
+
+        .task-checkbox {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #34c759;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .task-checkbox.checked {
+            background: #34c759;
+            color: #ffffff;
+        }
+
+        .task-body {
+            flex: 1;
+        }
+
+        .task-text {
+            font-size: 16px;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .task-notice {
+            font-size: 14px;
+            color: #6e6e73;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .task-deadline {
+            font-size: 13px;
+            color: #ff3b30;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .edit-btn, .delete-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .edit-btn {
+            color: #1d1d1f;
+        }
+
+        .edit-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .delete-btn {
+            color: #ff3b30;
+        }
+
+        .delete-btn:hover {
+            background: #ffebee;
+        }
+
+        .bottom-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .stat-card, .review-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 22px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 16px;
+        }
+
+        .stat-content {
+            text-align: center;
+            color: #c7c7cc;
+            font-size: 18px;
+            padding: 30px 0;
+        }
+
+        #reviewInput {
+            width: 100%;
+            min-height: 180px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            resize: none;
+            background: transparent;
+        }
+
+        #reviewInput::placeholder {
+            color: #c7c7cc;
+        }
+
+        /* 编辑弹窗样式 */
+        .edit-modal {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
             display: none;
             align-items: center;
             justify-content: center;
+            z-index: 1000;
         }
-        .modal-content {
+
+        .edit-modal-content {
             background: white;
+            border-radius: 16px;
             padding: 24px;
-            border-radius: 12px;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
         }
-        .modal-content input {
-            margin-bottom: 10px;
+
+        .edit-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .edit-modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .edit-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #8e8e93;
+        }
+
+        .edit-modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .edit-input {
+            padding: 12px;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .edit-modal-footer {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #f0f0f0;
+            color: #1d1d1f;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-save {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #1d1d1f;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .task-columns, .bottom-section {
+                grid-template-columns: 1fr;
+            }
+            .date-time {
+                font-size: 28px;
+            }
+            .extra-row {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="time" id="currentTime"></div>
-        <div>Manage your tasks easily</div>
-    </div>
+    <div class="container">
+        <div class="header">
+            <div class="date-time" id="dateTime"></div>
+            <div class="subtitle">Manage your daily tasks</div>
+        </div>
 
-    <div class="card">
-        <h3>Add New Task</h3>
-        <input type="text" id="taskInput" placeholder="Task title">
-
-        <div class="input-row">
-            <div class="datetime-group">
-                <input type="text" id="deadlineDisplay" placeholder="Select deadline" readonly>
-                <div class="datetime-panel" id="datetimePanel">
-                    <div class="date-picker" id="datePicker"></div>
-                    <div class="time-picker">
-                        <select id="hourSelect"></select> :
-                        <select id="minSelect"></select>
-                        <div class="ampm-picker">
-                            <button id="amBtn" class="active">AM</button>
-                            <button id="pmBtn">PM</button>
+        <div class="add-card">
+            <h3>Add New Task</h3>
+            <div class="input-group">
+                <input type="text" id="taskInput" placeholder="Enter a new task...">
+                
+                <div class="extra-row">
+                    <div class="date-picker-container">
+                        <input type="text" id="deadlineInput" placeholder="mm/dd/yyyy --:-- --" readonly>
+                        <div class="date-picker-popup" id="datePickerPopup">
+                            <div class="date-picker-header">
+                                <div class="date-picker-month" id="datePickerMonth"></div>
+                                <div class="date-picker-nav">
+                                    <button id="datePickerPrev">&uarr;</button>
+                                    <button id="datePickerNext">&darr;</button>
+                                </div>
+                            </div>
+                            <div class="date-picker-grid" id="datePickerGrid"></div>
+                            <div class="date-picker-time">
+                                <div class="time-select" id="hourSelect"></div>
+                                <span>:</span>
+                                <div class="time-select" id="minuteSelect"></div>
+                                <div class="ampm-select">
+                                    <!-- 核心修改：AM 在上，PM 在下 -->
+                                    <div class="ampm-option" data-value="AM">AM</div>
+                                    <div class="ampm-option" data-value="PM">PM</div>
+                                </div>
+                            </div>
+                            <div class="date-picker-footer">
+                                <button class="btn-clear" id="datePickerClear">Clear</button>
+                                <button class="btn-today" id="datePickerToday">Today</button>
+                                <button class="btn-confirm" id="datePickerConfirm">Confirm</button>
+                            </div>
                         </div>
                     </div>
-                    <button style="width:100%;margin-top:6px;" id="confirmDatetime">OK</button>
+                    <input type="text" id="noticeInput" placeholder="Notice details">
+                </div>
+
+                <button id="addBtn">
+                    <span>+</span>
+                    <span>Add</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="task-columns">
+            <div class="task-column">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span>▤</span>
+                        <span>To-Do</span>
+                    </div>
+                </div>
+                <div class="task-list" id="todoList">
+                    <div class="empty-tip">No tasks yet</div>
                 </div>
             </div>
-            <input type="text" id="noticeInput" placeholder="Notice detail">
+
+            <div class="task-column">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span>✅</span>
+                        <span>Completed</span>
+                    </div>
+                    <button class="clear-btn" id="clearDone">
+                        <span>🗑</span>
+                        <span>Clear</span>
+                    </button>
+                </div>
+                <div class="task-list" id="doneList">
+                    <div class="empty-tip">No completed tasks</div>
+                </div>
+            </div>
         </div>
 
-        <button id="addBtn">Add Task</button>
+        <div class="bottom-section">
+            <div class="stat-card">
+                <div class="card-title">
+                    <span>🗒</span>
+                    <span>Task Summary</span>
+                </div>
+                <div class="stat-content" id="statContent">No task records</div>
+            </div>
+
+            <div class="review-card">
+                <div class="card-title">
+                    <span>♻️</span>
+                    <span>Daily Review</span>
+                </div>
+                <textarea id="reviewInput" placeholder="Write your daily reflection..."></textarea>
+            </div>
+        </div>
     </div>
 
-    <div class="task-columns">
-        <div class="task-column card">
-            <h3>To-Do</h3>
-            <div id="todoList"></div>
-        </div>
-        <div class="task-column card">
-            <h3>Completed</h3>
-            <div id="doneList"></div>
-            <button id="clearDoneBtn" style="margin-top:10px">Clear All Completed</button>
-        </div>
-    </div>
-
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <h3>Edit Task</h3>
-            <input type="text" id="editTask" placeholder="Task">
-            <input type="text" id="editDeadline" placeholder="Deadline">
-            <input type="text" id="editNotice" placeholder="Notice">
-            <div style="display:flex;gap:10px;margin-top:10px">
-                <button id="saveEdit">Save</button>
-                <button id="cancelEdit" style="background:#888">Cancel</button>
+   
+    <div class="edit-modal" id="editModal">
+        <div class="edit-modal-content">
+            <div class="edit-modal-header">
+                <div class="edit-modal-title">Edit Task</div>
+                <button class="edit-modal-close" id="editModalClose">&times;</button>
+            </div>
+            <div class="edit-modal-body">
+                <input type="text" class="edit-input" id="editTaskInput" placeholder="Task title">
+                <input type="text" class="edit-input" id="editNoticeInput" placeholder="Notice details">
+                <input type="text" class="edit-input" id="editDeadlineInput" placeholder="mm/dd/yyyy --:-- --" readonly>
+            </div>
+            <div class="edit-modal-footer">
+                <button class="btn-cancel" id="editModalCancel">Cancel</button>
+                <button class="btn-save" id="editModalSave">Save</button>
             </div>
         </div>
     </div>
 
     <script>
-        
-        function updateTime() {
+       
+        function updateDateTime() {
             const now = new Date();
             const y = now.getFullYear();
-            const m = String(now.getMonth()+1).padStart(2, '0');
+            const m = String(now.getMonth() + 1).padStart(2, '0');
             const d = String(now.getDate()).padStart(2, '0');
-            const time = now.toLocaleTimeString('en-US', {
-                hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true
+            const wd = now.toLocaleDateString('en-US', { weekday: 'long' });
+            const timeStr = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
             });
-            document.getElementById('currentTime').innerText = `${y}/${m}/${d} ${time}`;
+            document.getElementById('dateTime').innerText = `${y}/${m}/${d} ${wd}, ${timeStr}`;
         }
-        setInterval(updateTime, 1000);
-        updateTime();
 
-       
-        const deadlineDisplay = document.getElementById('deadlineDisplay');
-        const datetimePanel = document.getElementById('datetimePanel');
-        const datePicker = document.getElementById('datePicker');
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        
+        const deadlineInput = document.getElementById('deadlineInput');
+        const datePickerPopup = document.getElementById('datePickerPopup');
+        const datePickerMonth = document.getElementById('datePickerMonth');
+        const datePickerGrid = document.getElementById('datePickerGrid');
         const hourSelect = document.getElementById('hourSelect');
-        const minSelect = document.getElementById('minSelect');
-        const amBtn = document.getElementById('amBtn');
-        const pmBtn = document.getElementById('pmBtn');
-        const confirmDatetime = document.getElementById('confirmDatetime');
+        const minuteSelect = document.getElementById('minuteSelect');
+        const ampmOptions = document.querySelectorAll('.ampm-option');
+        const datePickerPrev = document.getElementById('datePickerPrev');
+        const datePickerNext = document.getElementById('datePickerNext');
+        const datePickerClear = document.getElementById('datePickerClear');
+        const datePickerToday = document.getElementById('datePickerToday');
+        const datePickerConfirm = document.getElementById('datePickerConfirm');
 
+        let currentDate = new Date();
         let selectedDate = null;
-        let ampm = 'AM';
+        let selectedHour = null;
+        let selectedMinute = null;
+        let selectedAmPm = null;
 
        
-        for (let h=1; h<=12; h++) {
-            const opt = document.createElement('option');
-            opt.value = h;
-            opt.textContent = String(h).padStart(2, '0');
-            hourSelect.appendChild(opt);
-        }
-        for (let m=0; m<60; m++) {
-            const opt = document.createElement('option');
-            opt.value = m;
-            opt.textContent = String(m).padStart(2, '0');
-            minSelect.appendChild(opt);
-        }
-
-        deadlineDisplay.addEventListener('click', () => {
-            datetimePanel.style.display = 'block';
+        function initDatePicker() {
             renderDatePicker();
-        });
+            renderTimeSelect();
+            
+            deadlineInput.addEventListener('click', () => {
+                datePickerPopup.style.display = 'block';
+            });
 
-        document.addEventListener('click', (e) => {
-            if (!deadlineDisplay.contains(e.target) && !datetimePanel.contains(e.target)) {
-                datetimePanel.style.display = 'none';
-            }
-        });
+            datePickerPrev.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderDatePicker();
+            });
 
+            datePickerNext.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderDatePicker();
+            });
+
+            datePickerClear.addEventListener('click', () => {
+                selectedDate = null;
+                selectedHour = null;
+                selectedMinute = null;
+                selectedAmPm = null;
+                deadlineInput.value = '';
+                renderDatePicker();
+                renderTimeSelect();
+            });
+
+            datePickerToday.addEventListener('click', () => {
+                currentDate = new Date();
+                selectedDate = new Date(currentDate);
+                selectedHour = currentDate.getHours() % 12 || 12;
+                selectedMinute = currentDate.getMinutes();
+                selectedAmPm = currentDate.getHours() >= 12 ? 'PM' : 'AM';
+                deadlineInput.value = formatDateForInput(selectedDate, selectedHour, selectedMinute, selectedAmPm);
+                renderDatePicker();
+                renderTimeSelect();
+            });
+
+            datePickerConfirm.addEventListener('click', () => {
+                if (selectedDate && selectedHour && selectedMinute && selectedAmPm) {
+                    deadlineInput.value = formatDateForInput(selectedDate, selectedHour, selectedMinute, selectedAmPm);
+                }
+                datePickerPopup.style.display = 'none';
+            });
+
+            
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.date-picker-container')) {
+                    datePickerPopup.style.display = 'none';
+                }
+            });
+        }
+
+        
         function renderDatePicker() {
-            datePicker.innerHTML = '';
-            const now = new Date();
-            const today = now.getDate();
-            const year = now.getFullYear();
-            const month = now.getMonth();
-            const days = new Date(year, month+1, 0).getDate();
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startDay = firstDay.getDay();
+            const daysInMonth = lastDay.getDate();
 
-            for (let d=1; d<=days; d++) {
-                const div = document.createElement('div');
-                div.textContent = d;
-                if (d === today) div.classList.add('today');
-                div.addEventListener('click', () => {
-                    selectedDate = { year, month, day: d };
+            datePickerMonth.textContent = `${new Date(year, month).toLocaleDateString('en-US', { month: 'long' })} ${year}`;
+
+            
+            const weekdays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+            let gridHtml = weekdays.map(day => `<div class="date-picker-weekday">${day}</div>`).join('');
+
+        
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+            for (let i = startDay - 1; i >= 0; i--) {
+                gridHtml += `<div class="date-picker-day other-month">${prevMonthLastDay - i}</div>`;
+            }
+
+          
+            for (let i = 1; i <= daysInMonth; i++) {
+                const isSelected = selectedDate && 
+                    selectedDate.getFullYear() === year && 
+                    selectedDate.getMonth() === month && 
+                    selectedDate.getDate() === i;
+                gridHtml += `<div class="date-picker-day ${isSelected ? 'selected' : ''}" data-day="${i}">${i}</div>`;
+            }
+
+            
+            const nextMonthDays = 42 - (startDay + daysInMonth);
+            for (let i = 1; i <= nextMonthDays; i++) {
+                gridHtml += `<div class="date-picker-day other-month">${i}</div>`;
+            }
+
+            datePickerGrid.innerHTML = gridHtml;
+
+          
+            document.querySelectorAll('.date-picker-day:not(.other-month)').forEach(day => {
+                day.addEventListener('click', () => {
+                    const dayNum = parseInt(day.dataset.day);
+                    selectedDate = new Date(year, month, dayNum);
+                    renderDatePicker();
                 });
-                datePicker.appendChild(div);
+            });
+        }
+
+        
+        function renderTimeSelect() {
+          
+            let hourHtml = '';
+            for (let i = 1; i <= 12; i++) {
+                const isSelected = selectedHour === i;
+                hourHtml += `<div class="time-select ${isSelected ? 'selected' : ''}" data-hour="${i}">${String(i).padStart(2, '0')}</div>`;
+            }
+            hourSelect.innerHTML = hourHtml;
+
+            
+            let minuteHtml = '';
+            for (let i = 0; i < 60; i += 5) {
+                const isSelected = selectedMinute === i;
+                minuteHtml += `<div class="time-select ${isSelected ? 'selected' : ''}" data-minute="${i}">${String(i).padStart(2, '0')}</div>`;
+            }
+            minuteSelect.innerHTML = minuteHtml;
+
+           
+            ampmOptions.forEach(option => {
+                option.classList.remove('selected');
+                if (option.dataset.value === selectedAmPm) {
+                    option.classList.add('selected');
+                }
+            });
+
+           
+            hourSelect.querySelectorAll('.time-select').forEach(hour => {
+                hour.addEventListener('click', () => {
+                    selectedHour = parseInt(hour.dataset.hour);
+                    renderTimeSelect();
+                });
+            });
+
+            
+            minuteSelect.querySelectorAll('.time-select').forEach(minute => {
+                minute.addEventListener('click', () => {
+                    selectedMinute = parseInt(minute.dataset.minute);
+                    renderTimeSelect();
+                });
+            });
+
+            
+            ampmOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    selectedAmPm = option.dataset.value;
+                    renderTimeSelect();
+                });
+            });
+        }
+
+       
+        function formatDateForInput(date, hour, minute, ampm) {
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            const y = date.getFullYear();
+            const h = String(hour).padStart(2, '0');
+            const mi = String(minute).padStart(2, '0');
+            return `${m}/${d}/${y} ${h}:${mi} ${ampm}`;
+        }
+
+        
+        function parseDateFromInput(str) {
+            if (!str) return null;
+            const parts = str.split(' ');
+            const datePart = parts[0].split('/');
+            const timePart = parts[1].split(':');
+            const ampm = parts[2];
+
+            const month = parseInt(datePart[0]) - 1;
+            const day = parseInt(datePart[1]);
+            const year = parseInt(datePart[2]);
+            let hour = parseInt(timePart[0]);
+            const minute = parseInt(timePart[1]);
+
+            if (ampm === 'PM' && hour !== 12) hour += 12;
+            if (ampm === 'AM' && hour === 12) hour = 0;
+
+            return new Date(year, month, day, hour, minute);
+        }
+
+        
+        function getDeadlineText(deadlineStr) {
+            if (!deadlineStr) return "⏳ No deadline";
+            const end = parseDateFromInput(deadlineStr);
+            const now = new Date();
+            const diff = end - now;
+
+            if (diff <= 0) return "⏳ Expired";
+
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            return `⏳ ${h}h ${m}m ${s}s left`;
+        }
+
+        
+        function updateEmptyAndStat() {
+            const todoList = document.getElementById('todoList');
+            const doneList = document.getElementById('doneList');
+            const statContent = document.getElementById('statContent');
+
+            const todoEmpty = todoList.querySelector('.empty-tip');
+            if (todoList.children.length === 0 || (todoList.children.length === 1 && todoEmpty)) {
+                if (!todoEmpty) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-tip';
+                    empty.textContent = 'No tasks yet';
+                    todoList.appendChild(empty);
+                }
+            } else if (todoEmpty) todoEmpty.remove();
+
+            const doneEmpty = doneList.querySelector('.empty-tip');
+            if (doneList.children.length === 0 || (doneList.children.length === 1 && doneEmpty)) {
+                if (!doneEmpty) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-tip';
+                    empty.textContent = 'No completed tasks';
+                    doneList.appendChild(empty);
+                }
+            } else if (doneEmpty) doneEmpty.remove();
+
+            const todoCount = todoList.querySelectorAll('.todo-item').length;
+            const doneCount = doneList.querySelectorAll('.done-item').length;
+            if (todoCount === 0 && doneCount === 0) {
+                statContent.textContent = 'No task records';
+            } else {
+                statContent.textContent = `To-Do: ${todoCount} · Completed: ${doneCount}`;
             }
         }
 
-        amBtn.addEventListener('click', () => {
-            ampm = 'AM';
-            amBtn.classList.add('active');
-            pmBtn.classList.remove('active');
-        });
-        pmBtn.addEventListener('click', () => {
-            ampm = 'PM';
-            pmBtn.classList.add('active');
-            amBtn.classList.remove('active');
-        });
+      
+        function createTaskItem(text, notice, deadlineStr) {
+            const item = document.createElement('div');
+            item.className = 'todo-item';
+            item.dataset.task = text;
+            item.dataset.notice = notice || '';
+            item.dataset.deadline = deadlineStr || '';
 
-        confirmDatetime.addEventListener('click', () => {
-            if (!selectedDate) return;
-            const h = hourSelect.value;
-            const m = minSelect.value.padStart(2, '0');
-            const str = `${selectedDate.year}/${(selectedDate.month+1).toString().padStart(2,'0')}/${selectedDate.day.toString().padStart(2,'0')} ${h}:${m} ${ampm}`;
-            deadlineDisplay.value = str;
-            datetimePanel.style.display = 'none';
-        });
+            const checkbox = document.createElement('div');
+            checkbox.className = 'task-checkbox';
+            checkbox.addEventListener('click', () => {
+                item.classList.remove('todo-item');
+                item.classList.add('done-item');
+                checkbox.classList.add('checked');
+                checkbox.textContent = '✓';
+                document.getElementById('doneList').appendChild(item);
+                updateEmptyAndStat();
+            });
 
-        // 任务增删改
-        const todoList = document.getElementById('todoList');
-        const doneList = document.getElementById('doneList');
-        const editModal = document.getElementById('editModal');
-        let currentEditItem = null;
+            const body = document.createElement('div');
+            body.className = 'task-body';
 
-        function createTask(text, deadline, notice) {
-            const div = document.createElement('div');
-            div.className = 'task-item';
-            div.dataset.text = text;
-            div.dataset.deadline = deadline || '';
-            div.dataset.notice = notice || '';
+            const taskText = document.createElement('div');
+            taskText.className = 'task-text';
+            taskText.textContent = text;
 
-            div.innerHTML = `
-                <div class="task-text">${text}</div>
-                <div class="task-notice">📌 ${notice || 'No detail'}</div>
-                <div class="task-deadline">⏰ ${deadline || 'No deadline'}</div>
-                <div class="actions">
-                    <button class="editBtn">Edit</button>
-                    <button class="doneBtn" style="background:#28a745">Done</button>
-                    <button class="delBtn" style="background:#dc3545">Delete</button>
-                </div>
-            `;
+            const taskNotice = document.createElement('div');
+            taskNotice.className = 'task-notice';
+            taskNotice.innerHTML = `📝 ${notice || 'No notice'}`;
 
-            div.querySelector('.doneBtn').onclick = () => {
-                div.classList.add('done');
-                doneList.appendChild(div);
-                div.querySelector('.doneBtn').remove();
-            };
-            div.querySelector('.delBtn').onclick = () => div.remove();
-            div.querySelector('.editBtn').onclick = () => {
-                currentEditItem = div;
-                document.getElementById('editTask').value = div.dataset.text;
-                document.getElementById('editDeadline').value = div.dataset.deadline;
-                document.getElementById('editNotice').value = div.dataset.notice;
-                editModal.style.display = 'flex';
-            };
-            return div;
+            const deadlineLine = document.createElement('div');
+            deadlineLine.className = 'task-deadline';
+            deadlineLine.textContent = getDeadlineText(deadlineStr);
+
+            if (deadlineStr) {
+                setInterval(() => {
+                    deadlineLine.textContent = getDeadlineText(deadlineStr);
+                }, 1000);
+            }
+
+            const taskActions = document.createElement('div');
+            taskActions.className = 'task-actions';
+
+            const editBtn = document.createElement('button');
+            editBtn.className = 'edit-btn';
+            editBtn.innerHTML = '✏️ Edit';
+            editBtn.addEventListener('click', () => {
+                openEditModal(item);
+            });
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'delete-btn';
+            delBtn.innerHTML = '✕ Delete';
+            delBtn.addEventListener('click', () => {
+                item.remove();
+                updateEmptyAndStat();
+            });
+
+            taskActions.appendChild(editBtn);
+            taskActions.appendChild(delBtn);
+
+            body.appendChild(taskText);
+            body.appendChild(taskNotice);
+            body.appendChild(deadlineLine);
+            body.appendChild(taskActions);
+
+            item.appendChild(checkbox);
+            item.appendChild(body);
+            return item;
         }
 
-        document.getElementById('addBtn').onclick = () => {
-            const t = document.getElementById('taskInput').value.trim();
-            const d = deadlineDisplay.value.trim();
-            const n = document.getElementById('noticeInput').value.trim();
-            if (!t) return;
-            todoList.appendChild(createTask(t, d, n));
-            document.getElementById('taskInput').value = '';
-            deadlineDisplay.value = '';
-            document.getElementById('noticeInput').value = '';
-        };
+        
+        const editModal = document.getElementById('editModal');
+        const editModalClose = document.getElementById('editModalClose');
+        const editModalCancel = document.getElementById('editModalCancel');
+        const editModalSave = document.getElementById('editModalSave');
+        const editTaskInput = document.getElementById('editTaskInput');
+        const editNoticeInput = document.getElementById('editNoticeInput');
+        const editDeadlineInput = document.getElementById('editDeadlineInput');
 
-        document.getElementById('clearDoneBtn').onclick = () => {
-            doneList.innerHTML = '';
-        };
+        let currentEditingItem = null;
 
-        document.getElementById('saveEdit').onclick = () => {
-            if (!currentEditItem) return;
-            const t = document.getElementById('editTask').value.trim();
-            const d = document.getElementById('editDeadline').value.trim();
-            const n = document.getElementById('editNotice').value.trim();
-            if (!t) return;
+        function openEditModal(item) {
+            currentEditingItem = item;
+            editTaskInput.value = item.dataset.task;
+            editNoticeInput.value = item.dataset.notice;
+            editDeadlineInput.value = item.dataset.deadline;
+            editModal.style.display = 'flex';
+        }
 
-            currentEditItem.dataset.text = t;
-            currentEditItem.dataset.deadline = d;
-            currentEditItem.dataset.notice = n;
-            currentEditItem.querySelector('.task-text').innerText = t;
-            currentEditItem.querySelector('.task-notice').innerText = '📌 ' + (n || 'No detail');
-            currentEditItem.querySelector('.task-deadline').innerText = '⏰ ' + (d || 'No deadline');
+        function closeEditModal() {
             editModal.style.display = 'none';
-        };
+            currentEditingItem = null;
+        }
 
-        document.getElementById('cancelEdit').onclick = () => {
-            editModal.style.display = 'none';
-        };
+        editModalClose.addEventListener('click', closeEditModal);
+        editModalCancel.addEventListener('click', closeEditModal);
+
+        editModalSave.addEventListener('click', () => {
+            if (!currentEditingItem) return;
+
+            const newTask = editTaskInput.value.trim();
+            const newNotice = editNoticeInput.value.trim();
+            const newDeadline = editDeadlineInput.value.trim();
+
+            if (!newTask) {
+                alert('Task title cannot be empty');
+                return;
+            }
+
+            
+            currentEditingItem.dataset.task = newTask;
+            currentEditingItem.dataset.notice = newNotice;
+            currentEditingItem.dataset.deadline = newDeadline;
+
+            
+            const body = currentEditingItem.querySelector('.task-body');
+            body.querySelector('.task-text').textContent = newTask;
+            body.querySelector('.task-notice').innerHTML = `📝 ${newNotice || 'No notice'}`;
+            body.querySelector('.task-deadline').textContent = getDeadlineText(newDeadline);
+
+            if (newDeadline) {
+                setInterval(() => {
+                    body.querySelector('.task-deadline').textContent = getDeadlineText(newDeadline);
+                }, 1000);
+            }
+
+            closeEditModal();
+            updateEmptyAndStat();
+        });
+
+        
+        editModal.addEventListener('click', (e) => {
+            if (e.target === editModal) {
+                closeEditModal();
+            }
+        });
+
+     
+        const taskInput = document.getElementById('taskInput');
+        const noticeInput = document.getElementById('noticeInput');
+        const addBtn = document.getElementById('addBtn');
+        const todoList = document.getElementById('todoList');
+        const clearDoneBtn = document.getElementById('clearDone');
+
+        addBtn.addEventListener('click', () => {
+            const text = taskInput.value.trim();
+            if (!text) return;
+            const notice = noticeInput.value.trim();
+            const deadlineStr = deadlineInput.value.trim();
+            const item = createTaskItem(text, notice, deadlineStr);
+            todoList.appendChild(item);
+            taskInput.value = '';
+            noticeInput.value = '';
+            deadlineInput.value = '';
+            selectedDate = null;
+            selectedHour = null;
+            selectedMinute = null;
+            selectedAmPm = null;
+            updateEmptyAndStat();
+        });
+
+        taskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addBtn.click();
+        });
+
+        clearDoneBtn.addEventListener('click', () => {
+            document.getElementById('doneList').querySelectorAll('.done-item').forEach(i => i.remove());
+            updateEmptyAndStat();
+        });
+
+        // 初始化
+        initDatePicker();
+        updateEmptyAndStat();
     </script>
 </body>
 </html>
