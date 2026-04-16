@@ -79,18 +79,187 @@
             gap: 10px;
         }
 
-        /* 你要的日期时间输入框（原生，好用，英文，AM在上PM在下） */
-        #deadline {
+        /* 日期选择器容器 */
+        .date-picker-container {
             flex: 1;
+            position: relative;
+        }
+
+        #deadlineInput {
+            width: 100%;
             padding: 16px;
             border: 1px solid #e5e5ea;
             border-radius: 12px;
             font-size: 16px;
-            background: #fafafa;
             outline: none;
+            background: #fafafa;
+            cursor: pointer;
         }
 
-        #notice {
+        #deadlineInput::placeholder {
+            color: #c7c7cc;
+        }
+
+        .date-picker-popup {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 16px;
+            z-index: 100;
+            display: none;
+            min-width: 300px;
+        }
+
+        .date-picker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .date-picker-month {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .date-picker-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .date-picker-nav button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .date-picker-nav button:hover {
+            background: #f0f0f0;
+        }
+
+        .date-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .date-picker-weekday {
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6e6e73;
+            padding: 4px;
+        }
+
+        .date-picker-day {
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .date-picker-day:hover {
+            background: #f0f0f0;
+        }
+
+        .date-picker-day.selected {
+            background: #1d1d1f;
+            color: white;
+        }
+
+        .date-picker-day.other-month {
+            color: #c7c7cc;
+        }
+
+        .date-picker-time {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .time-select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .time-select:hover {
+            background: #f0f0f0;
+        }
+
+        .time-select.selected {
+            background: #1d1d1f;
+            color: white;
+        }
+
+        /* 核心修改：AM 在上，PM 在下，垂直排列 */
+        .ampm-select {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .ampm-option {
+            padding: 8px;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .ampm-option:hover {
+            background: #f0f0f0;
+        }
+
+        .ampm-option.selected {
+            background: #1d1d1f;
+            color: white;
+        }
+
+        .date-picker-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .date-picker-footer button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-clear {
+            background: #f0f0f0;
+            color: #1d1d1f;
+        }
+
+        .btn-today {
+            background: #f0f0f0;
+            color: #1d1d1f;
+        }
+
+        .btn-confirm {
+            background: #1d1d1f;
+            color: white;
+        }
+
+        #noticeInput {
             flex: 2;
             padding: 16px;
             border: 1px solid #e5e5ea;
@@ -100,7 +269,7 @@
             background: #fafafa;
         }
 
-        #notice::placeholder {
+        #noticeInput::placeholder {
             color: #c7c7cc;
         }
 
@@ -318,10 +487,13 @@
             color: #c7c7cc;
         }
 
-        /* 编辑弹窗 */
+        /* 编辑弹窗样式 */
         .edit-modal {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0,0,0,0.5);
             display: none;
             align-items: center;
@@ -358,36 +530,45 @@
             color: #8e8e93;
         }
 
+        .edit-modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
         .edit-input {
-            width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: 1px solid #e5e5ea;
-            border-radius: 10px;
-            margin-bottom: 12px;
+            border-radius: 8px;
             font-size: 16px;
+            outline: none;
         }
 
         .edit-modal-footer {
             display: flex;
+            gap: 8px;
             justify-content: flex-end;
-            gap: 10px;
         }
 
-        .btn-cancel, .btn-save {
-            padding: 10px 18px;
-            border-radius: 10px;
+        .btn-cancel {
+            padding: 10px 20px;
             border: none;
+            border-radius: 8px;
+            background: #f0f0f0;
+            color: #1d1d1f;
             cursor: pointer;
             font-size: 16px;
         }
 
-        .btn-cancel {
-            background: #f0f0f0;
-        }
-
         .btn-save {
-            background: #000;
-            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #1d1d1f;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
         }
 
         @media (max-width: 600px) {
@@ -404,296 +585,563 @@
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="header">
-        <div class="date-time" id="dateTime"></div>
-        <div class="subtitle">Manage your daily tasks</div>
-    </div>
-
-    <div class="add-card">
-        <h3>Add New Task</h3>
-        <div class="input-group">
-            <input type="text" id="taskInput" placeholder="Enter a new task...">
-            
-            <div class="extra-row">
-                <!-- 你要的日期时间选择器，原生，好用，AM在上PM在下 -->
-                <input type="datetime-local" id="deadline">
-                <input type="text" id="notice" placeholder="Notice details">
-            </div>
-
-            <button id="addBtn">
-                <span>+</span>
-                <span>Add</span>
-            </button>
-        </div>
-    </div>
-
-    <div class="task-columns">
-        <div class="task-column">
-            <div class="column-header">
-                <div class="column-title">
-                    <span>▤</span>
-                    <span>To-Do</span>
-                </div>
-            </div>
-            <div class="task-list" id="todoList">
-                <div class="empty-tip">No tasks yet</div>
-            </div>
+    <div class="container">
+        <div class="header">
+            <div class="date-time" id="dateTime"></div>
+            <div class="subtitle">Manage your daily tasks</div>
         </div>
 
-        <div class="task-column">
-            <div class="column-header">
-                <div class="column-title">
-                    <span>✅</span>
-                    <span>Completed</span>
+        <div class="add-card">
+            <h3>Add New Task</h3>
+            <div class="input-group">
+                <input type="text" id="taskInput" placeholder="Enter a new task...">
+                
+                <div class="extra-row">
+                    <div class="date-picker-container">
+                        <input type="text" id="deadlineInput" placeholder="mm/dd/yyyy --:-- --" readonly>
+                        <div class="date-picker-popup" id="datePickerPopup">
+                            <div class="date-picker-header">
+                                <div class="date-picker-month" id="datePickerMonth"></div>
+                                <div class="date-picker-nav">
+                                    <button id="datePickerPrev">&uarr;</button>
+                                    <button id="datePickerNext">&darr;</button>
+                                </div>
+                            </div>
+                            <div class="date-picker-grid" id="datePickerGrid"></div>
+                            <div class="date-picker-time">
+                                <div class="time-select" id="hourSelect"></div>
+                                <span>:</span>
+                                <div class="time-select" id="minuteSelect"></div>
+                                <div class="ampm-select">
+                                    <!-- 核心修改：AM 在上，PM 在下，顺序固定 -->
+                                    <div class="ampm-option" data-value="AM">AM</div>
+                                    <div class="ampm-option" data-value="PM">PM</div>
+                                </div>
+                            </div>
+                            <div class="date-picker-footer">
+                                <button class="btn-clear" id="datePickerClear">Clear</button>
+                                <button class="btn-today" id="datePickerToday">Today</button>
+                                <button class="btn-confirm" id="datePickerConfirm">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="text" id="noticeInput" placeholder="Notice details">
                 </div>
-                <button class="clear-btn" id="clearDone">
-                    <span>🗑</span>
-                    <span>Clear</span>
+
+                <button id="addBtn">
+                    <span>+</span>
+                    <span>Add</span>
                 </button>
             </div>
-            <div class="task-list" id="doneList">
-                <div class="empty-tip">No completed tasks</div>
+        </div>
+
+        <div class="task-columns">
+            <div class="task-column">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span>▤</span>
+                        <span>To-Do</span>
+                    </div>
+                </div>
+                <div class="task-list" id="todoList">
+                    <div class="empty-tip">No tasks yet</div>
+                </div>
+            </div>
+
+            <div class="task-column">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span>✅</span>
+                        <span>Completed</span>
+                    </div>
+                    <button class="clear-btn" id="clearDone">
+                        <span>🗑</span>
+                        <span>Clear</span>
+                    </button>
+                </div>
+                <div class="task-list" id="doneList">
+                    <div class="empty-tip">No completed tasks</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-section">
+            <div class="stat-card">
+                <div class="card-title">
+                    <span>🗒</span>
+                    <span>Task Summary</span>
+                </div>
+                <div class="stat-content" id="statContent">No task records</div>
+            </div>
+
+            <div class="review-card">
+                <div class="card-title">
+                    <span>♻️</span>
+                    <span>Daily Review</span>
+                </div>
+                <textarea id="reviewInput" placeholder="Write your daily reflection..."></textarea>
             </div>
         </div>
     </div>
 
-    <div class="bottom-section">
-        <div class="stat-card">
-            <div class="card-title">
-                <span>🗒</span>
-                <span>Task Summary</span>
+    <!-- 编辑弹窗 -->
+    <div class="edit-modal" id="editModal">
+        <div class="edit-modal-content">
+            <div class="edit-modal-header">
+                <div class="edit-modal-title">Edit Task</div>
+                <button class="edit-modal-close" id="editModalClose">&times;</button>
             </div>
-            <div class="stat-content" id="statContent">No task records</div>
-        </div>
-
-        <div class="review-card">
-            <div class="card-title">
-                <span>♻️</span>
-                <span>Daily Review</span>
+            <div class="edit-modal-body">
+                <input type="text" class="edit-input" id="editTaskInput" placeholder="Task title">
+                <input type="text" class="edit-input" id="editNoticeInput" placeholder="Notice details">
+                <input type="text" class="edit-input" id="editDeadlineInput" placeholder="mm/dd/yyyy --:-- --" readonly>
             </div>
-            <textarea id="reviewInput" placeholder="Write your daily reflection..."></textarea>
+            <div class="edit-modal-footer">
+                <button class="btn-cancel" id="editModalCancel">Cancel</button>
+                <button class="btn-save" id="editModalSave">Save</button>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- 编辑弹窗 -->
-<div class="edit-modal" id="editModal">
-    <div class="edit-modal-content">
-        <div class="edit-modal-header">
-            <div class="edit-modal-title">Edit Task</div>
-            <button class="edit-modal-close" id="editModalClose">&times;</button>
-        </div>
-        <input class="edit-input" id="editTask" placeholder="Task title">
-        <input class="edit-input" id="editNotice" placeholder="Notice details">
-        <input class="edit-input" id="editDeadline" type="datetime-local">
-        <div class="edit-modal-footer">
-            <button class="btn-cancel" id="editCancel">Cancel</button>
-            <button class="btn-save" id="editSave">Save</button>
-        </div>
-    </div>
-</div>
+    <script>
+       
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                month: '2-digit', 
+                day: '2-digit', 
+                year: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit', 
+                hour12: true 
+            };
+            document.getElementById('dateTime').innerText = now.toLocaleDateString('en-US', options);
+        }
 
-<script>
-    // 顶部时间
-    function updateDateTime() {
-        const now = new Date();
-        const opt = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
-        const dateStr = now.toLocaleDateString('en-US', opt);
-        const timeStr = now.toLocaleTimeString('en-US');
-        document.getElementById('dateTime').innerText = dateStr + ' ' + timeStr;
-    }
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
+   
+      
+        const deadlineInput = document.getElementById('deadlineInput');
+        const datePickerPopup = document.getElementById('datePickerPopup');
+        const datePickerMonth = document.getElementById('datePickerMonth');
+        const datePickerGrid = document.getElementById('datePickerGrid');
+        const hourSelect = document.getElementById('hourSelect');
+        const minuteSelect = document.getElementById('minuteSelect');
+        const ampmOptions = document.querySelectorAll('.ampm-option');
+        const datePickerPrev = document.getElementById('datePickerPrev');
+        const datePickerNext = document.getElementById('datePickerNext');
+        const datePickerClear = document.getElementById('datePickerClear');
+        const datePickerToday = document.getElementById('datePickerToday');
+        const datePickerConfirm = document.getElementById('datePickerConfirm');
 
-    // 任务
-    const taskInput = document.getElementById('taskInput');
-    const deadlineInput = document.getElementById('deadline');
-    const noticeInput = document.getElementById('notice');
-    const addBtn = document.getElementById('addBtn');
-    const todoList = document.getElementById('todoList');
-    const doneList = document.getElementById('doneList');
-    const clearDone = document.getElementById('clearDone');
-    const statContent = document.getElementById('statContent');
+        let currentDate = new Date();
+        let selectedDate = null;
+        let selectedHour = null;
+        let selectedMinute = null;
+        let selectedAmPm = null;
 
-    const editModal = document.getElementById('editModal');
-    const editTask = document.getElementById('editTask');
-    const editNotice = document.getElementById('editNotice');
-    const editDeadline = document.getElementById('editDeadline');
-    const editSave = document.getElementById('editSave');
-    const editCancel = document.getElementById('editCancel');
-    const editModalClose = document.getElementById('editModalClose');
+        // 初始化日期选择器
+        function initDatePicker() {
+            renderDatePicker();
+            renderTimeSelect();
+            
+            deadlineInput.addEventListener('click', () => {
+                datePickerPopup.style.display = 'block';
+            });
 
-    let currentEditItem = null;
+            datePickerPrev.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderDatePicker();
+            });
 
-    // 倒计时文字
-    function getCountdown(iso) {
-        if (!iso) return "No deadline";
-        const end = new Date(iso);
-        const now = new Date();
-        const diff = end - now;
-        if (diff <= 0) return "Expired";
-        const h = Math.floor(diff / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const s = Math.floor((diff % 60000) / 1000);
-        return `${h}h ${m}m ${s}s left`;
-    }
+            datePickerNext.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderDatePicker();
+            });
 
-    // 创建任务
-    function createTaskItem(text, notice, deadline) {
-        const item = document.createElement('div');
-        item.className = 'todo-item';
+            datePickerClear.addEventListener('click', () => {
+                selectedDate = null;
+                selectedHour = null;
+                selectedMinute = null;
+                selectedAmPm = null;
+                deadlineInput.value = '';
+                renderDatePicker();
+                renderTimeSelect();
+            });
 
-        const checkbox = document.createElement('div');
-        checkbox.className = 'task-checkbox';
-        checkbox.onclick = () => {
-            item.classList.remove('todo-item');
-            item.classList.add('done-item');
-            checkbox.classList.add('checked');
-            checkbox.innerText = '✓';
-            doneList.appendChild(item);
-            update();
-        };
+            datePickerToday.addEventListener('click', () => {
+                currentDate = new Date();
+                selectedDate = new Date(currentDate);
+                selectedHour = currentDate.getHours() % 12 || 12;
+                selectedMinute = currentDate.getMinutes();
+                selectedAmPm = currentDate.getHours() >= 12 ? 'PM' : 'AM';
+                deadlineInput.value = formatDateForInput(selectedDate, selectedHour, selectedMinute, selectedAmPm);
+                renderDatePicker();
+                renderTimeSelect();
+            });
 
-        const body = document.createElement('div');
-        body.className = 'task-body';
+            datePickerConfirm.addEventListener('click', () => {
+                if (selectedDate && selectedHour && selectedMinute && selectedAmPm) {
+                    deadlineInput.value = formatDateForInput(selectedDate, selectedHour, selectedMinute, selectedAmPm);
+                }
+                datePickerPopup.style.display = 'none';
+            });
 
-        const taskText = document.createElement('div');
-        taskText.className = 'task-text';
-        taskText.innerText = text;
+            
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.date-picker-container')) {
+                    datePickerPopup.style.display = 'none';
+                }
+            });
+        }
 
-        const taskNote = document.createElement('div');
-        taskNote.className = 'task-notice';
-        taskNote.innerText = notice || 'No notice';
+       
+        function renderDatePicker() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startDay = firstDay.getDay();
+            const daysInMonth = lastDay.getDate();
 
-        const taskTime = document.createElement('div');
-        taskTime.className = 'task-deadline';
-        taskTime.innerText = getCountdown(deadline);
+            datePickerMonth.textContent = `${new Date(year, month).toLocaleDateString('en-US', { month: 'long' })} ${year}`;
 
-        const actions = document.createElement('div');
-        actions.className = 'task-actions';
+           
+            const weekdays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+            let gridHtml = weekdays.map(day => `<div class="date-picker-weekday">${day}</div>`).join('');
 
-        const editBtn = document.createElement('button');
-        editBtn.className = 'edit-btn';
-        editBtn.innerText = 'Edit';
-        editBtn.onclick = () => {
-            currentEditItem = item;
-            editTask.value = taskText.innerText;
-            editNotice.value = taskNote.innerText === 'No notice' ? '' : taskNote.innerText;
-            editDeadline.value = deadline || '';
+          
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+            for (let i = startDay - 1; i >= 0; i--) {
+                gridHtml += `<div class="date-picker-day other-month">${prevMonthLastDay - i}</div>`;
+            }
+
+           
+            for (let i = 1; i <= daysInMonth; i++) {
+                const isSelected = selectedDate && 
+                    selectedDate.getFullYear() === year && 
+                    selectedDate.getMonth() === month && 
+                    selectedDate.getDate() === i;
+                gridHtml += `<div class="date-picker-day ${isSelected ? 'selected' : ''}" data-day="${i}">${i}</div>`;
+            }
+
+         
+            const nextMonthDays = 42 - (startDay + daysInMonth);
+            for (let i = 1; i <= nextMonthDays; i++) {
+                gridHtml += `<div class="date-picker-day other-month">${i}</div>`;
+            }
+
+            datePickerGrid.innerHTML = gridHtml;
+
+         
+            document.querySelectorAll('.date-picker-day:not(.other-month)').forEach(day => {
+                day.addEventListener('click', () => {
+                    const dayNum = parseInt(day.dataset.day);
+                    selectedDate = new Date(year, month, dayNum);
+                    renderDatePicker();
+                });
+            });
+        }
+
+        
+        function renderTimeSelect() {
+            
+            let hourHtml = '';
+            for (let i = 1; i <= 12; i++) {
+                const isSelected = selectedHour === i;
+                hourHtml += `<div class="time-select ${isSelected ? 'selected' : ''}" data-hour="${i}">${String(i).padStart(2, '0')}</div>`;
+            }
+            hourSelect.innerHTML = hourHtml;
+
+            let minuteHtml = '';
+            for (let i = 0; i < 60; i += 5) {
+                const isSelected = selectedMinute === i;
+                minuteHtml += `<div class="time-select ${isSelected ? 'selected' : ''}" data-minute="${i}">${String(i).padStart(2, '0')}</div>`;
+            }
+            minuteSelect.innerHTML = minuteHtml;
+
+           
+            ampmOptions.forEach(option => {
+                option.classList.remove('selected');
+                if (option.dataset.value === selectedAmPm) {
+                    option.classList.add('selected');
+                }
+            });
+
+            
+            hourSelect.querySelectorAll('.time-select').forEach(hour => {
+                hour.addEventListener('click', () => {
+                    selectedHour = parseInt(hour.dataset.hour);
+                    renderTimeSelect();
+                });
+            });
+
+            minuteSelect.querySelectorAll('.time-select').forEach(minute => {
+                minute.addEventListener('click', () => {
+                    selectedMinute = parseInt(minute.dataset.minute);
+                    renderTimeSelect();
+                });
+            });
+
+            ampmOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    selectedAmPm = option.dataset.value;
+                    renderTimeSelect();
+                });
+            });
+        }
+
+        
+        function formatDateForInput(date, hour, minute, ampm) {
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            const y = date.getFullYear();
+            const h = String(hour).padStart(2, '0');
+            const mi = String(minute).padStart(2, '0');
+            return `${m}/${d}/${y} ${h}:${mi} ${ampm}`;
+        }
+
+        
+        function parseDateFromInput(str) {
+            if (!str) return null;
+            const parts = str.split(' ');
+            const datePart = parts[0].split('/');
+            const timePart = parts[1].split(':');
+            const ampm = parts[2];
+
+            const month = parseInt(datePart[0]) - 1;
+            const day = parseInt(datePart[1]);
+            const year = parseInt(datePart[2]);
+            let hour = parseInt(timePart[0]);
+            const minute = parseInt(timePart[1]);
+
+            if (ampm === 'PM' && hour !== 12) hour += 12;
+            if (ampm === 'AM' && hour === 12) hour = 0;
+
+            return new Date(year, month, day, hour, minute);
+        }
+
+        
+        function getDeadlineText(deadlineStr) {
+            if (!deadlineStr) return "⏳ No deadline";
+            const end = parseDateFromInput(deadlineStr);
+            const now = new Date();
+            const diff = end - now;
+
+            if (diff <= 0) return "⏳ Expired";
+
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            return `⏳ ${h}h ${m}m ${s}s left`;
+        }
+
+      
+        function updateEmptyAndStat() {
+            const todoList = document.getElementById('todoList');
+            const doneList = document.getElementById('doneList');
+            const statContent = document.getElementById('statContent');
+
+            const todoEmpty = todoList.querySelector('.empty-tip');
+            if (todoList.children.length === 0 || (todoList.children.length === 1 && todoEmpty)) {
+                if (!todoEmpty) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-tip';
+                    empty.textContent = 'No tasks yet';
+                    todoList.appendChild(empty);
+                }
+            } else if (todoEmpty) todoEmpty.remove();
+
+            const doneEmpty = doneList.querySelector('.empty-tip');
+            if (doneList.children.length === 0 || (doneList.children.length === 1 && doneEmpty)) {
+                if (!doneEmpty) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-tip';
+                    empty.textContent = 'No completed tasks';
+                    doneList.appendChild(empty);
+                }
+            } else if (doneEmpty) doneEmpty.remove();
+
+            const todoCount = todoList.querySelectorAll('.todo-item').length;
+            const doneCount = doneList.querySelectorAll('.done-item').length;
+            if (todoCount === 0 && doneCount === 0) {
+                statContent.textContent = 'No task records';
+            } else {
+                statContent.textContent = `To-Do: ${todoCount} · Completed: ${doneCount}`;
+            }
+        }
+
+       
+        function createTaskItem(text, notice, deadlineStr) {
+            const item = document.createElement('div');
+            item.className = 'todo-item';
+            item.dataset.task = text;
+            item.dataset.notice = notice || '';
+            item.dataset.deadline = deadlineStr || '';
+
+            const checkbox = document.createElement('div');
+            checkbox.className = 'task-checkbox';
+            checkbox.addEventListener('click', () => {
+                item.classList.remove('todo-item');
+                item.classList.add('done-item');
+                checkbox.classList.add('checked');
+                checkbox.textContent = '✓';
+                document.getElementById('doneList').appendChild(item);
+                updateEmptyAndStat();
+            });
+
+            const body = document.createElement('div');
+            body.className = 'task-body';
+
+            const taskText = document.createElement('div');
+            taskText.className = 'task-text';
+            taskText.textContent = text;
+
+            const taskNotice = document.createElement('div');
+            taskNotice.className = 'task-notice';
+            taskNotice.innerHTML = `📝 ${notice || 'No notice'}`;
+
+            const deadlineLine = document.createElement('div');
+            deadlineLine.className = 'task-deadline';
+            deadlineLine.textContent = getDeadlineText(deadlineStr);
+
+            if (deadlineStr) {
+                setInterval(() => {
+                    deadlineLine.textContent = getDeadlineText(deadlineStr);
+                }, 1000);
+            }
+
+            const taskActions = document.createElement('div');
+            taskActions.className = 'task-actions';
+
+            const editBtn = document.createElement('button');
+            editBtn.className = 'edit-btn';
+            editBtn.innerHTML = '✏️ Edit';
+            editBtn.addEventListener('click', () => {
+                openEditModal(item);
+            });
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'delete-btn';
+            delBtn.innerHTML = '✕ Delete';
+            delBtn.addEventListener('click', () => {
+                item.remove();
+                updateEmptyAndStat();
+            });
+
+            taskActions.appendChild(editBtn);
+            taskActions.appendChild(delBtn);
+
+            body.appendChild(taskText);
+            body.appendChild(taskNotice);
+            body.appendChild(deadlineLine);
+            body.appendChild(taskActions);
+
+            item.appendChild(checkbox);
+            item.appendChild(body);
+            return item;
+        }
+
+        
+        const editModal = document.getElementById('editModal');
+        const editModalClose = document.getElementById('editModalClose');
+        const editModalCancel = document.getElementById('editModalCancel');
+        const editModalSave = document.getElementById('editModalSave');
+        const editTaskInput = document.getElementById('editTaskInput');
+        const editNoticeInput = document.getElementById('editNoticeInput');
+        const editDeadlineInput = document.getElementById('editDeadlineInput');
+
+        let currentEditingItem = null;
+
+        function openEditModal(item) {
+            currentEditingItem = item;
+            editTaskInput.value = item.dataset.task;
+            editNoticeInput.value = item.dataset.notice;
+            editDeadlineInput.value = item.dataset.deadline;
             editModal.style.display = 'flex';
-        };
-
-        const delBtn = document.createElement('button');
-        delBtn.className = 'delete-btn';
-        delBtn.innerText = 'Delete';
-        delBtn.onclick = () => { item.remove(); update(); };
-
-        actions.appendChild(editBtn);
-        actions.appendChild(delBtn);
-        body.appendChild(taskText);
-        body.appendChild(taskNote);
-        body.appendChild(taskTime);
-        body.appendChild(actions);
-        item.appendChild(checkbox);
-        item.appendChild(body);
-
-        // 倒计时刷新
-        if (deadline) {
-            const timer = setInterval(() => {
-                if (!item.isConnected) clearInterval(timer);
-                taskTime.innerText = getCountdown(deadline);
-            }, 1000);
         }
 
-        return item;
-    }
-
-    // 添加
-    addBtn.onclick = () => {
-        const t = taskInput.value.trim();
-        if (!t) return;
-        const task = createTaskItem(t, noticeInput.value, deadlineInput.value);
-        todoList.appendChild(task);
-        taskInput.value = '';
-        noticeInput.value = '';
-        deadlineInput.value = '';
-        update();
-    };
-
-    // 清空已完成
-    clearDone.onclick = () => {
-        doneList.innerHTML = '<div class="empty-tip">No completed tasks</div>';
-        update();
-    };
-
-    // 保存编辑
-    editSave.onclick = () => {
-        if (!currentEditItem) return;
-        const t = editTask.value.trim();
-        if (!t) return;
-        const n = editNotice.value;
-        const d = editDeadline.value;
-
-        const taskText = currentEditItem.querySelector('.task-text');
-        const taskNote = currentEditItem.querySelector('.task-notice');
-        const taskTime = currentEditItem.querySelector('.task-deadline');
-
-        taskText.innerText = t;
-        taskNote.innerText = n || 'No notice';
-        taskTime.innerText = getCountdown(d);
-
-        // 重启倒计时
-        if (d) {
-            const timer = setInterval(() => {
-                if (!currentEditItem.isConnected) clearInterval(timer);
-                taskTime.innerText = getCountdown(d);
-            }, 1000);
+        function closeEditModal() {
+            editModal.style.display = 'none';
+            currentEditingItem = null;
         }
 
-        editModal.style.display = 'none';
-        update();
-    };
+        editModalClose.addEventListener('click', closeEditModal);
+        editModalCancel.addEventListener('click', closeEditModal);
 
-    // 关闭编辑
-    function closeEdit() {
-        editModal.style.display = 'none';
-        currentEditItem = null;
-    }
-    editCancel.onclick = closeEdit;
-    editModalClose.onclick = closeEdit;
-    editModal.onclick = (e) => { if (e.target === editModal) closeEdit(); };
+        editModalSave.addEventListener('click', () => {
+            if (!currentEditingItem) return;
 
-    // 更新空状态与统计
-    function update() {
-        const todoEmpty = todoList.querySelector('.empty-tip');
-        const doneEmpty = doneList.querySelector('.empty-tip');
+            const newTask = editTaskInput.value.trim();
+            const newNotice = editNoticeInput.value.trim();
+            const newDeadline = editDeadlineInput.value.trim();
 
-        if (todoList.children.length === 0 || (todoList.children.length === 1 && todoEmpty)) {
-            if (!todoEmpty) {
-                const e = document.createElement('div');
-                e.className = 'empty-tip';
-                e.innerText = 'No tasks yet';
-                todoList.appendChild(e);
+            if (!newTask) {
+                alert('Task title cannot be empty');
+                return;
             }
-        } else if (todoEmpty) todoEmpty.remove();
 
-        if (doneList.children.length === 0 || (doneList.children.length === 1 && doneEmpty)) {
-            if (!doneEmpty) {
-                const e = document.createElement('div');
-                e.className = 'empty-tip';
-                e.innerText = 'No completed tasks';
-                doneList.appendChild(e);
+           
+            currentEditingItem.dataset.task = newTask;
+            currentEditingItem.dataset.notice = newNotice;
+            currentEditingItem.dataset.deadline = newDeadline;
+
+            const body = currentEditingItem.querySelector('.task-body');
+            body.querySelector('.task-text').textContent = newTask;
+            body.querySelector('.task-notice').innerHTML = `📝 ${newNotice || 'No notice'}`;
+            body.querySelector('.task-deadline').textContent = getDeadlineText(newDeadline);
+
+            if (newDeadline) {
+                setInterval(() => {
+                    body.querySelector('.task-deadline').textContent = getDeadlineText(newDeadline);
+                }, 1000);
             }
-        } else if (doneEmpty) doneEmpty.remove();
 
-        const todoCount = todoList.querySelectorAll('.todo-item').length;
-        const doneCount = doneList.querySelectorAll('.done-item').length;
-        statContent.innerText = `To-Do: ${todoCount} | Done: ${doneCount}`;
-    }
+            closeEditModal();
+            updateEmptyAndStat();
+        });
 
-    update();
-</script>
+        editModal.addEventListener('click', (e) => {
+            if (e.target === editModal) {
+                closeEditModal();
+            }
+        });
+        const taskInput = document.getElementById('taskInput');
+        const noticeInput = document.getElementById('noticeInput');
+        const addBtn = document.getElementById('addBtn');
+        const todoList = document.getElementById('todoList');
+        const clearDoneBtn = document.getElementById('clearDone');
+
+        addBtn.addEventListener('click', () => {
+            const text = taskInput.value.trim();
+            if (!text) return;
+            const notice = noticeInput.value.trim();
+            const deadlineStr = deadlineInput.value.trim();
+            const item = createTaskItem(text, notice, deadlineStr);
+            todoList.appendChild(item);
+            taskInput.value = '';
+            noticeInput.value = '';
+            deadlineInput.value = '';
+            selectedDate = null;
+            selectedHour = null;
+            selectedMinute = null;
+            selectedAmPm = null;
+            updateEmptyAndStat();
+        });
+
+        taskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addBtn.click();
+        });
+
+        clearDoneBtn.addEventListener('click', () => {
+            document.getElementById('doneList').querySelectorAll('.done-item').forEach(i => i.remove());
+            updateEmptyAndStat();
+        });
+
+        // 初始化
+        initDatePicker();
+        updateEmptyAndStat();
+    </script>
 </body>
 </html>
