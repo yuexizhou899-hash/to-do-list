@@ -317,7 +317,7 @@
                 <input type="text" id="taskInput" placeholder="Enter a new task...">
                 
                 <div class="extra-row">
-                    <input type="datetime-local" id="deadline" lang="en">
+                    <input type="datetime-local" id="deadline">
                     <input type="text" id="notice" placeholder="Notice details">
                 </div>
 
@@ -378,21 +378,14 @@
     </div>
 
     <script>
+      
         function updateDateTime() {
             const now = new Date();
-
             const y = now.getFullYear();
             const m = String(now.getMonth() + 1).padStart(2, '0');
             const d = String(now.getDate()).padStart(2, '0');
             const wd = now.toLocaleDateString('en-US', { weekday: 'long' });
-
-            const timeStr = now.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: true
-            });
-
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
             document.getElementById('dateTime').innerText = `${y}/${m}/${d} ${wd}, ${timeStr}`;
         }
 
@@ -414,7 +407,6 @@
             const end = new Date(deadline);
             const diff = end - now;
             if (diff <= 0) return "⏳ Expired";
-
             const h = Math.floor(diff / 3600000);
             const m = Math.floor((diff % 3600000) / 60000);
             const s = Math.floor((diff % 60000) / 1000);
