@@ -61,3 +61,11 @@ The target market covers students, office workers, and general individual users 
 2. Backend API developed by my teammate.
 3. Frontend developed by me using HTML, CSS, vanilla JavaScript.
 4. No third-party libraries or frameworks are used.
+
+# Domo
+Demo video click: https://youtu.be/MUokrlc6RhY 
+This video click includes:
+1. How to download the software
+3. How to run the software
+4. Functions of the software
+5. How to use the software
